@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rick and Morty API</title>
+    <style>
+        body { background-color: #202329; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background-color: #3c3e44; width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.5); text-align: center; padding-bottom: 20px;}
+        img { width: 100%; height: auto; }
+        h2 { margin: 10px 0; color: #ff9800; }
+        .info { margin: 5px; font-size: 14px; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: {{ renk }}; margin-right: 5px; }
+        button { background: #ff9800; border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold; }
+        button:hover { background: #e68a00; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="{{ resim }}" alt="{{ isim }}">
+        <h2>{{ isim }}</h2>
+        <div class="info">
+            <span class="status-dot"></span>{{ durum }} - {{ tur }}
+        </div>
+        <div class="info">📍 {{ konum }}</div>
+        <form action="">
+            <button onclick="window.location.reload();">Sıradaki Karakter</button>
+        </form>
+    </div>
+</body>
+</html>
