@@ -17,17 +17,16 @@
         .header h2 { font-family: 'Creepster', cursive; color: #97ce4c; font-size: 2rem; margin: 0; text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 0 0 10px #97ce4c; }
         .footer { position: absolute; bottom: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 20; font-weight: bold; letter-spacing: 1px; }
 
-        /* --- KATMANLAMA (Z-INDEX) --- */
+        /* --- KATMANLAMA --- */
         .space-background { z-index: -30; }
         .star-layer { z-index: -20; }
         .planet-container { z-index: -10; }
         .ufo-layer { z-index: -5; }
         .card-layer { z-index: 10; }
 
-        /* --- UZAY ARKAPLANI (Daha canlı) --- */
+        /* --- UZAY ARKAPLANI --- */
         .space-background {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Çizgi film havası için daha mor/mavi bir uzay */
             background: radial-gradient(circle at bottom left, #2b1055 0%, #000000 100%);
         }
         .star-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -35,59 +34,46 @@
         .stars-medium { background-image: radial-gradient(3px 3px at 30px 40px, white, transparent), radial-gradient(3px 3px at 150px 200px, white, transparent); background-size: 300px 300px; animation: moveStars 50s linear infinite; opacity: 0.9; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
 
-        /* --- ÇİZGİ FİLM GEZEGENLERİ (ORTAK ÖZELLİKLER) --- */
+        /* --- ÇİZGİ FİLM GEZEGENLERİ --- */
         .planet-container { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;}
         .planet-base {
             position: absolute; border-radius: 50%;
-            /* Çizgi film efekti için kalın siyah kenarlık ve basit gölge */
             border: 4px solid #000000;
             box-shadow: inset -15px -15px 0 rgba(0,0,0,0.3); 
         }
-        /* HIZLANDIRILMIŞ HAREKET ANİMASYONU */
         @keyframes cartoonFloat {
             0% { transform: translate(0, 0) rotate(0deg); }
             50% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); }
             100% { transform: translate(0, 0) rotate(360deg); }
         }
 
-        /* 1. Çizgi Film DÜNYA */
         .planet-earth {
             width: 180px; height: 180px; top: 10%; left: 5%;
-            background: #4B9CD3; /* Düz mavi */
-            /* Basit kıtalar için ikinci bir gradient */
+            background: #4B9CD3;
             background-image: radial-gradient(circle at 70% 30%, #2ecc71 30%, transparent 30%), radial-gradient(circle at 20% 60%, #2ecc71 20%, transparent 20%);
             --tx: 150px; --ty: 100px; --rot: 20deg;
-            animation: cartoonFloat 35s infinite ease-in-out alternate; /* Çok daha hızlı (35s) */
+            animation: cartoonFloat 35s infinite ease-in-out alternate;
         }
-
-        /* 2. Çizgi Film URANÜS */
         .planet-uranus {
             width: 120px; height: 120px; bottom: 15%; right: 20%;
-            background: #00ffff; /* Parlak camgöbeği */
+            background: #00ffff;
             --tx: -120px; --ty: -180px; --rot: -30deg;
             animation: cartoonFloat 40s infinite ease-in-out alternate;
         }
-
-        /* 3. Çizgi Film MARS (Yeni) */
         .planet-mars {
             width: 100px; height: 100px; top: 20%; right: 15%;
-            background: #ff5733; /* Turuncu/Kırmızı */
-            /* Basit kraterler */
+            background: #ff5733;
             background-image: radial-gradient(circle at 30% 40%, #c0392b 10%, transparent 10%), radial-gradient(circle at 60% 70%, #c0392b 15%, transparent 15%);
             --tx: -80px; --ty: 150px; --rot: 45deg;
             animation: cartoonFloat 30s infinite ease-in-out alternate;
         }
-
-        /* 4. Çizgi Film MOR GEZEGEN (Yeni) */
         .planet-purple {
             width: 80px; height: 80px; bottom: 30%; left: 10%;
-            background: #9b59b6; /* Mor */
-            background-image: linear-gradient(transparent 40%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.2) 60%, transparent 60%); /* Basit bir bant */
+            background: #9b59b6;
+            background-image: linear-gradient(transparent 40%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.2) 60%, transparent 60%);
             --tx: 100px; --ty: -100px; --rot: -60deg;
             animation: cartoonFloat 45s infinite ease-in-out alternate;
         }
-
-        /* 5. Çizgi Film SATÜRN (YENİ TASARIM) */
         .saturn-wrapper {
             position: absolute; bottom: 10%; left: -5%;
             width: 300px; height: 300px;
@@ -95,25 +81,16 @@
             --tx: 100px; --ty: -50px; --rot: 15deg;
             animation: cartoonFloat 50s infinite ease-in-out alternate;
         }
-        .cartoon-saturn-body {
-            width: 140px; height: 140px; background: #f1c40f; /* Sarı/Turuncu */
-            z-index: 2; /* Halkanın önünde */
-        }
-        /* Yeni, Basit Çizgi Film Halka */
+        .cartoon-saturn-body { width: 140px; height: 140px; background: #f1c40f; z-index: 2; }
         .cartoon-saturn-ring {
-            position: absolute;
-            width: 260px; height: 70px; /* Eliptik şekil */
-            background: transparent;
-            border: 12px solid #e67e22; /* Kalın turuncu halka kenarı */
-            border-radius: 50%;
-            transform: rotate(-20deg); /* Hafif eğik */
-            z-index: 1; /* Gezegenin arkasında */
-            box-shadow: 0 0 0 4px #000000; /* Halkanın da siyah kenarlığı olsun */
+            position: absolute; width: 260px; height: 70px; background: transparent;
+            border: 12px solid #e67e22; border-radius: 50%; transform: rotate(-20deg);
+            z-index: 1; box-shadow: 0 0 0 4px #000000;
         }
 
-        /* --- UFO FİLOSU (Aynı kalıyor, gayet iyiler) --- */
+        /* --- UFO FİLOSU --- */
         .ufo-layer { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
-        .ufo-svg { position: absolute; filter: drop-shadow(0 0 5px currentColor); /* Parlamayı biraz azalttım çizgi film için */ }
+        .ufo-svg { position: absolute; filter: drop-shadow(0 0 5px currentColor); }
         .ship1 { width: 130px; color: #00ffcc; animation: flyMain 40s linear infinite; }
         @keyframes flyMain { 0% { left: -150px; top: 30%; transform: rotate(5deg); } 100% { left: 110%; top: 50%; transform: rotate(10deg); } }
         .ship2 { width: 80px; color: #ff4444; opacity: 0.9; animation: flyFast 25s linear infinite 2s; }
@@ -123,24 +100,27 @@
         .ship4 { width: 100px; color: #ffcc00; animation: flyCross 35s linear infinite 10s; }
         @keyframes flyCross { 0% { left: -120px; top: -50px; transform: rotate(25deg); } 100% { left: 80%; top: 110%; transform: rotate(25deg); } }
 
-        /* --- KART TASARIMI (Daha kalın kenarlıklı) --- */
+        /* --- KART TASARIMI --- */
         .card-layer { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; pointer-events: none; }
         .card {
             pointer-events: auto;
-            background: rgba(20, 25, 35, 0.85); /* Daha opak */
-            border: 4px solid #97ce4c; /* Kalın çizgi film kenarlığı */
-            padding: 40px; border-radius: 25px; width: 340px; text-align: center;
-            box-shadow: 10px 10px 0px #000000; /* Çizgi film gölgesi (sert gölge) */
+            background: rgba(20, 25, 35, 0.9); /* Arka planı biraz daha koyulttum yazı netleşsin */
+            border: 4px solid #97ce4c;
+            padding: 30px; border-radius: 25px; width: 340px; text-align: center;
+            box-shadow: 10px 10px 0px #000000;
             position: relative; z-index: 10;
         }
-        .image-container { position: relative; width: 150px; height: 150px; margin: 0 auto 25px; }
+        .image-container { position: relative; width: 140px; height: 140px; margin: 0 auto 15px; }
         .image-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #97ce4c; box-shadow: 5px 5px 0 #000; }
         .status-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background-color: {{ renk }}; border: 3px solid #000; }
-        h1 { font-family: 'Creepster', cursive; color: #42b4ca; font-size: 2.5rem; margin: 10px 0; text-shadow: 3px 3px 0 #000; }
-        .sub-text { color: #97ce4c; font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; font-weight: bold; text-shadow: 2px 2px 0 #000; }
-        .data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 3px solid rgba(151, 206, 76, 0.3); font-size: 1rem; }
-        .data-label { color: #aaa; font-weight: bold; } .data-value { color: white; font-weight: 800; text-align: right; text-shadow: 1px 1px 0 #000; }
-        button { margin-top: 30px; background: #97ce4c; border: 4px solid #000; padding: 15px 0; width: 100%; border-radius: 15px; font-family: 'Creepster', cursive; font-size: 1.5rem; color: #000; cursor: pointer; transition: all 0.2s; box-shadow: 5px 5px 0 #000; }
+        h1 { font-family: 'Creepster', cursive; color: #42b4ca; font-size: 2.2rem; margin: 5px 0 20px 0; text-shadow: 3px 3px 0 #000; }
+        
+        /* BİLGİ SATIRLARI (YENİ) */
+        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 2px solid rgba(151, 206, 76, 0.3); font-size: 0.95rem; }
+        .data-label { color: #888; font-weight: bold; letter-spacing: 1px; }
+        .data-value { color: white; font-weight: 800; text-align: right; text-shadow: 1px 1px 0 #000; max-width: 200px; }
+        
+        button { margin-top: 25px; background: #97ce4c; border: 4px solid #000; padding: 12px 0; width: 100%; border-radius: 15px; font-family: 'Creepster', cursive; font-size: 1.5rem; color: #000; cursor: pointer; transition: all 0.2s; box-shadow: 5px 5px 0 #000; }
         button:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 #000; background: #a9e05f; }
         button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
     </style>
@@ -158,7 +138,6 @@
         <div class="planet-base planet-uranus"></div>
         <div class="planet-base planet-mars"></div>
         <div class="planet-base planet-purple"></div>
-        
         <div class="saturn-wrapper">
             <div class="cartoon-saturn-ring"></div>
             <div class="planet-base cartoon-saturn-body"></div>
@@ -178,15 +157,19 @@
                 <img src="{{ resim }}" alt="{{ isim }}">
                 <div class="status-badge" title="{{ durum }}"></div>
             </div>
+            
             <h1>{{ isim }}</h1>
-            <div class="sub-text">{{ tur }} • {{ cinsiyet }}</div>
+
+            <div class="data-row"><span class="data-label">TÜR</span><span class="data-value">{{ tur }}</span></div>
+            <div class="data-row"><span class="data-label">CİNSİYET</span><span class="data-value">{{ cinsiyet }}</span></div>
             <div class="data-row"><span class="data-label">KONUM</span><span class="data-value">{{ konum }}</span></div>
             <div class="data-row" style="border-bottom: none;"><span class="data-label">DURUM</span><span class="data-value" style="color: {{ renk }}">{{ durum }}</span></div>
+            
             <form action=""><button onclick="window.location.reload();">PORTALI AÇ</button></form>
         </div>
     </div>
 
-    <div class="footer">Cartoon Multiverse • v6.0</div>
+    <div class="footer">Cartoon Multiverse • v7.0 Full Bio</div>
 
 </body>
 </html>
