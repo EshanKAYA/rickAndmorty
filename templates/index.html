@@ -1,31 +1,297 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Rick and Morty API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiverse Portal Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #202329; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background-color: #3c3e44; width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.5); text-align: center; padding-bottom: 20px;}
-        img { width: 100%; height: auto; }
-        h2 { margin: 10px 0; color: #ff9800; }
-        .info { margin: 5px; font-size: 14px; }
-        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: {{ renk }}; margin-right: 5px; }
-        button { background: #ff9800; border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold; }
-        button:hover { background: #e68a00; }
+        /* --- GENEL AYARLAR --- */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0b0e11;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* UZAY ARKAPLANI */
+        .space-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a10 100%);
+            z-index: -10;
+        }
+
+        /* YILDIZLAR */
+        .stars {
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 100px 200px #FFF, 400px 500px #FFF, 800px 100px #FFF, 1200px 300px #FFF,
+                        200px 800px #FFF, 1500px 600px #FFF, 1000px 900px #FFF, 500px 200px #FFF;
+            animation: twinkle 5s infinite linear;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* GEZEGENLER */
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            z-index: -5;
+            box-shadow: inset -20px -20px 50px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.05);
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(var(--tx1), var(--ty1)) rotate(var(--r1)); }
+            66% { transform: translate(var(--tx2), var(--ty2)) rotate(var(--r2)); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        /* GEZEGEN 1: JÜPİTER */
+        .jupiter {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -100px;
+            background: linear-gradient(rotate 30deg, #8c6e4a, #bc9e7a, #d4bc9e, #a65a44, #8c6e4a);
+            --tx1: -30px; --ty1: -50px; --r1: 5deg;
+            --tx2: -10px; --ty2: -20px; --r2: -5deg;
+            animation: floatAround 120s infinite ease-in-out;
+            opacity: 0.9;
+        }
+
+        /* GEZEGEN 2: YEŞİL */
+        .planet-green {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            left: 5%;
+            background: radial-gradient(circle at 30% 30%, #97ce4c, #2b6e22);
+            --tx1: 40px; --ty1: 30px; --r1: -10deg;
+            --tx2: 20px; --ty2: 60px; --r2: 10deg;
+            animation: floatAround 80s infinite ease-in-out reverse;
+        }
+
+        /* GEZEGEN 3: MAVİ */
+        .planet-blue {
+            width: 90px;
+            height: 90px;
+            top: 40%;
+            right: 20%;
+            background: radial-gradient(circle at 30% 30%, #42b4ca, #1b4e6b);
+            --tx1: -30px; --ty1: -50px; --r1: 20deg;
+            --tx2: -10px; --ty2: -20px; --r2: -10deg;
+            animation: floatAround 60s infinite ease-in-out 2s;
+        }
+
+        /* GEZEGEN 4: KIRMIZI */
+        .planet-red {
+            width: 120px;
+            height: 120px;
+            bottom: 25%;
+            left: 15%;
+            background: radial-gradient(circle at 40% 40%, #d63d2e, #7c1a12);
+            --tx1: 50px; --ty1: -30px; --r1: -20deg;
+            --tx2: 30px; --ty2: 10px; --r2: 15deg;
+            animation: floatAround 90s infinite ease-in-out 5s;
+        }
+
+        /* GEZEGEN 5: MOR */
+        .planet-purple {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 25%;
+            background: radial-gradient(circle at 30% 30%, #a64cce, #4a1c6e);
+            --tx1: 20px; --ty1: -20px; --r1: 30deg;
+            --tx2: 0px; --ty2: -10px; --r2: -20deg;
+            animation: floatAround 50s infinite ease-in-out reverse;
+        }
+
+        /* --- SVG UZAY GEMİSİ AYARLARI --- */
+        .ufo-svg {
+            position: absolute;
+            z-index: -2;
+            filter: drop-shadow(0 0 5px #00ffcc); /* Neon parlama */
+        }
+
+        /* Gemi 1 Animasyonu */
+        .ship1 {
+            width: 120px;
+            animation: flyMain 25s linear infinite;
+        }
+        @keyframes flyMain {
+            0% { left: -150px; top: 20%; transform: rotate(10deg); }
+            50% { top: 10%; transform: rotate(-5deg); }
+            100% { left: 110%; top: 40%; transform: rotate(5deg); }
+        }
+
+        /* Gemi 2 Animasyonu */
+        .ship2 {
+            width: 80px;
+            opacity: 0.8;
+            animation: flyFast 15s linear infinite 3s;
+        }
+        @keyframes flyFast {
+            0% { right: -100px; top: 10%; transform: rotate(-15deg) scaleX(-1); }
+            100% { right: 110%; top: 5%; transform: rotate(15deg) scaleX(-1); }
+        }
+
+        /* Gemi 3 Animasyonu */
+        .ship3 {
+            width: 60px;
+            opacity: 0.6;
+            filter: blur(1px);
+            animation: flySlow 40s linear infinite;
+        }
+        @keyframes flySlow {
+            0% { left: -100px; bottom: 20%; transform: rotate(5deg); }
+            100% { left: 110%; bottom: 10%; transform: rotate(-5deg); }
+        }
+
+        /* --- KART TASARIMI --- */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(151, 206, 76, 0.3);
+            padding: 40px;
+            border-radius: 25px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(151, 206, 76, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .image-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #97ce4c;
+            box-shadow: 0 0 25px #97ce4c;
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: {{ renk }};
+            border: 3px solid #202329;
+            box-shadow: 0 0 10px {{ renk }};
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            color: #42b4ca;
+            font-size: 2.5rem;
+            margin: 10px 0;
+            text-shadow: 3px 3px 0 #000;
+        }
+
+        .sub-text { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+        .info-box { background: rgba(0, 0, 0, 0.4); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.95rem; border-left: 4px solid #42b4ca; }
+        
+        button {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #97ce4c, #42b4ca);
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            color: #1a1a1a;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(151, 206, 76, 0.4);
+            width: 100%;
+        }
+        button:hover { transform: scale(1.05); box-shadow: 0 0 40px #97ce4c; color: white; }
     </style>
 </head>
 <body>
+
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="planet jupiter"></div>
+        <div class="planet planet-green"></div>
+        <div class="planet planet-blue"></div>
+        <div class="planet planet-red"></div>
+        <div class="planet planet-purple"></div>
+        
+        <svg class="ufo-svg ship1" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 35 Q50 5 70 35" fill="#b0e0e6" stroke="#42b4ca" stroke-width="2"/>
+            <ellipse cx="50" cy="35" rx="45" ry="12" fill="#d3d3d3" stroke="#555" stroke-width="2"/>
+            <circle cx="20" cy="35" r="3" fill="#97ce4c" />
+            <circle cx="50" cy="40" r="3" fill="#97ce4c" />
+            <circle cx="80" cy="35" r="3" fill="#97ce4c" />
+        </svg>
+
+        <svg class="ufo-svg ship2" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 35 Q50 5 70 35" fill="#b0e0e6" stroke="#42b4ca" stroke-width="2"/>
+            <ellipse cx="50" cy="35" rx="45" ry="12" fill="#d3d3d3" stroke="#555" stroke-width="2"/>
+            <circle cx="20" cy="35" r="3" fill="#ff4422" />
+            <circle cx="50" cy="40" r="3" fill="#ff4422" />
+            <circle cx="80" cy="35" r="3" fill="#ff4422" />
+        </svg>
+
+        <svg class="ufo-svg ship3" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 35 Q50 5 70 35" fill="#b0e0e6" stroke="#42b4ca" stroke-width="2"/>
+            <ellipse cx="50" cy="35" rx="45" ry="12" fill="#d3d3d3" stroke="#555" stroke-width="2"/>
+            <circle cx="20" cy="35" r="3" fill="#a64cce" />
+            <circle cx="50" cy="40" r="3" fill="#a64cce" />
+            <circle cx="80" cy="35" r="3" fill="#a64cce" />
+        </svg>
+    </div>
+
     <div class="card">
-        <img src="{{ resim }}" alt="{{ isim }}">
-        <h2>{{ isim }}</h2>
-        <div class="info">
-            <span class="status-dot"></span>{{ durum }} - {{ tur }}
+        <div class="image-container">
+            <img src="{{ resim }}" alt="{{ isim }}">
+            <div class="status-badge" title="{{ durum }}"></div>
         </div>
-        <div class="info">📍 {{ konum }}</div>
+
+        <h1>{{ isim }}</h1>
+        <div class="sub-text">{{ tur }} • {{ cinsiyet }}</div>
+
+        <div class="info-box">
+            <span style="color: #97ce4c;">KONUM</span>
+            <span>{{ konum }}</span>
+        </div>
+        
+        <div class="info-box" style="border-left-color: {{ renk }};">
+            <span style="color: #97ce4c;">DURUM</span>
+            <span style="color: {{ renk }}; font-weight: bold;">{{ durum }}</span>
+        </div>
+
         <form action="">
-            <button onclick="window.location.reload();">Sıradaki Karakter</button>
+            <button onclick="window.location.reload();">PORTALI AÇ</button>
         </form>
     </div>
+
 </body>
 </html>
