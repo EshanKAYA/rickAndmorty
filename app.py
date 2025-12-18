@@ -1,16 +1,17 @@
-
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 import requests
 import random
 
 app = Flask(__name__)
 
-# Rick and Morty API URL'si
+# Session (Hafıza) kullanmak için gizli bir anahtar şarttır
+app.secret_key = "rick_sanchez_wubba_lubba_dub_dub"
+
 BASE_URL = "https://rickandmortyapi.com/api/character/"
 
 @app.route('/')
 def home():
-    # 1 ile 826 arasında rastgele karakter seç
+    # 1. Rastgele Karakter Çek
     karakter_id = random.randint(1, 826)
     endpoint = f"{BASE_URL}{karakter_id}"
     
@@ -19,33 +20,42 @@ def home():
         if response.status_code == 200:
             data = response.json()
             
-            k_isim = data.get('name')
-            k_durum = data.get('status')
-            k_tur = data.get('species')
-            k_cinsiyet = data.get('gender')
-            k_resim = data.get('image')
-            k_konum = data['location']['name']
-            
-            # Renk ayarı
-            durum_renk = "gray"
-            if k_durum == "Alive":
-                durum_renk = "#55cc44" # Yeşil
-            elif k_durum == "Dead":
-                durum_renk = "#d63d2e" # Kırmızı
+            # Karakter Verileri
+            karakter = {
+                'isim': data['name'],
+                'resim': data['image'],
+                'tur': data['species'],
+                'cinsiyet': data['gender'],
+                'konum': data['location']['name'],
+                'durum': data['status'],
+                # Duruma göre renk seçimi
+                'renk': "#55efc4" if data['status'] == "Alive" else ("#d63031" if data['status'] == "Dead" else "#636e72")
+            }
 
-            return render_template('index.html',
-                                   isim=k_isim,
-                                   durum=k_durum,
-                                   tur=k_tur,
-                                   cinsiyet=k_cinsiyet,
-                                   resim=k_resim,
-                                   konum=k_konum,
-                                   renk=durum_renk)
+            # --- STATEFUL KISMI (HAFIZA) ---
+            
+            # Eğer hafızada 'gecmis' diye bir liste yoksa oluştur
+            if 'gecmis' not in session:
+                session['gecmis'] = []
+
+            # Mevcut karakteri hafızaya ekle (Listenin en başına)
+            # Aynı karakter üst üste gelmesin diye kontrol edebiliriz ama şimdilik gerek yok
+            session['gecmis'].insert(0, karakter)
+
+            # Hafıza çok şişmesin, sadece son 5 karakteri tutalım
+            if len(session['gecmis']) > 5:
+                session['gecmis'].pop()
+            
+            # Session'ın güncellendiğini belirt
+            session.modified = True
+
+            return render_template('index.html', 
+                                   karakter=karakter, 
+                                   gecmis=session['gecmis']) # Geçmişi de sayfaya gönderiyoruz
         else:
             return "API Hatası"
-    except:
-        return "Bağlantı Hatası"
+    except Exception as e:
+        return f"Hata: {e}"
 
 if __name__ == '__main__':
-    # Docker için host 0.0.0.0 olmak ZORUNDA
     app.run(debug=True, host='0.0.0.0', port=5000)
