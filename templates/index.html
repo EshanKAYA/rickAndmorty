@@ -3,42 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rick's Stateful DB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
+    <title>Rick's Favorite DB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Exo+2:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         /* --- GENEL AYARLAR --- */
         body {
             margin: 0; padding: 0; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             background-color: #050505; font-family: 'Exo 2', sans-serif; overflow: hidden; color: white;
         }
         .header { position: absolute; top: 20px; left: 30px; z-index: 20; }
-        .header h2 { font-family: 'Creepster', cursive; color: #97ce4c; font-size: 2rem; margin: 0; text-shadow: 2px 2px 0 #000, 0 0 10px #97ce4c; }
-        .footer { position: absolute; bottom: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 20; font-weight: bold; }
+        .header h2 { font-family: 'Creepster', cursive; color: #97ce4c; font-size: 2.5rem; margin: 0; text-shadow: 3px 3px 0 #000, 0 0 15px #97ce4c; }
 
-        /* --- ARKA PLAN VE YILDIZLAR --- */
+        /* --- ARKA PLAN (Sabit) --- */
         .space-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at bottom left, #2b1055 0%, #000000 100%); z-index: -30; }
         .star-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -20; }
         .stars-small { background-image: radial-gradient(2px 2px at 10px 10px, white, transparent), radial-gradient(2px 2px at 50px 80px, white, transparent); background-size: 100px 100px; animation: moveStars 80s linear infinite; opacity: 0.7; }
         @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-1000px); } }
 
-        /* --- PLANETLER (Çizgi Film Tarzı) --- */
+        /* --- ANA DÜZEN (LAYOUT) --- */
+        .main-container {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* --- SOL KART (ANA KARAKTER) --- */
+        .card {
+            background: rgba(20, 25, 35, 0.9);
+            border: 4px solid #97ce4c;
+            padding: 30px; border-radius: 25px; width: 320px; text-align: center;
+            box-shadow: 15px 15px 0px #000000;
+            position: relative;
+        }
+        .image-container { position: relative; width: 140px; height: 140px; margin: 0 auto 15px; }
+        .image-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #97ce4c; box-shadow: 5px 5px 0 #000; }
+        .status-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background-color: {{ karakter.renk }}; border: 3px solid #000; }
+        h1 { font-family: 'Creepster', cursive; color: #42b4ca; font-size: 2rem; margin: 5px 0 20px 0; text-shadow: 2px 2px 0 #000; }
+        
+        .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid rgba(151, 206, 76, 0.3); font-size: 0.9rem; }
+        .data-label { color: #888; font-weight: bold; } .data-value { color: white; font-weight: 800; text-align: right; text-shadow: 1px 1px 0 #000; }
+
+        /* Buton Grubu */
+        .btn-group { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* Portalı Aç Butonu */
+        .btn-portal {
+            background: #97ce4c; border: 3px solid #000; padding: 10px 0; width: 100%; border-radius: 12px;
+            font-family: 'Creepster', cursive; font-size: 1.4rem; color: #000; cursor: pointer;
+            box-shadow: 4px 4px 0 #000; transition: all 0.1s;
+        }
+        .btn-portal:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+
+        /* Favori Butonu (Sarı) */
+        .btn-fav {
+            background: #f1c40f; border: 3px solid #000; padding: 10px 0; width: 100%; border-radius: 12px;
+            font-family: 'Exo 2', sans-serif; font-weight: 900; font-size: 1rem; color: #000; cursor: pointer;
+            box-shadow: 4px 4px 0 #000; transition: all 0.1s; text-transform: uppercase;
+        }
+        .btn-fav:hover { background: #f39c12; }
+        .btn-fav:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+
+        /* --- SAĞ PANEL (FAVORİLER LİSTESİ) --- */
+        .fav-panel {
+            width: 280px;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 4px solid #42b4ca;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 15px 15px 0 #000;
+            display: flex; flex-direction: column;
+        }
+        
+        .fav-title {
+            font-family: 'Creepster', cursive; color: #f1c40f; font-size: 1.8rem; text-align: center; margin-bottom: 15px;
+            text-shadow: 2px 2px 0 #000; border-bottom: 2px solid #42b4ca; padding-bottom: 10px;
+        }
+
+        .fav-list {
+            overflow-y: auto; /* Çok eklenince aşağı kaydır */
+            flex-grow: 1;
+            padding-right: 5px;
+        }
+        
+        /* Scrollbar Tasarımı */
+        .fav-list::-webkit-scrollbar { width: 8px; }
+        .fav-list::-webkit-scrollbar-thumb { background: #42b4ca; border-radius: 4px; }
+
+        /* Tekil Favori Kartı (Küçük) */
+        .fav-item {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px; margin-bottom: 10px; border-radius: 10px;
+            border: 2px solid #333; transition: 0.2s;
+        }
+        .fav-item:hover { background: rgba(255,255,255,0.2); transform: translateX(5px); }
+        
+        .fav-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; }
+        .fav-info h4 { margin: 0; font-size: 0.9rem; color: #fff; }
+        .fav-info span { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+
+        .btn-clear {
+            margin-top: 10px; background: #e74c3c; border: 2px solid #000; color: white; padding: 8px; font-weight: bold; cursor: pointer; border-radius: 8px;
+        }
+
+        /* --- ÇİZGİ FİLM GEZEGENLER --- */
         .planet-container { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -10; }
         .planet-base { position: absolute; border-radius: 50%; border: 4px solid #000; box-shadow: inset -15px -15px 0 rgba(0,0,0,0.3); }
         @keyframes cartoonFloat { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); } }
+        .planet-earth { width: 150px; height: 150px; top: 10%; left: 5%; background: #4B9CD3; --tx: 50px; --ty: 50px; animation: cartoonFloat 40s infinite alternate; }
+        .cartoon-saturn-body { width: 100px; height: 100px; background: #f1c40f; position: absolute; bottom: 20%; right: 10%; border: 4px solid #000; border-radius: 50%; animation: cartoonFloat 60s infinite alternate; --tx: -50px; --ty: -30px; }
 
-        .planet-earth { width: 180px; height: 180px; top: 10%; left: 5%; background: #4B9CD3; --tx: 50px; --ty: 50px; animation: cartoonFloat 40s infinite alternate; }
-        .planet-mars { width: 100px; height: 100px; top: 20%; right: 15%; background: #ff5733; --tx: -50px; --ty: 80px; animation: cartoonFloat 30s infinite alternate; }
-        .saturn-wrapper { position: absolute; bottom: 10%; left: -5%; width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; animation: cartoonFloat 50s infinite alternate; --tx: 50px; --ty: -50px; }
-        .cartoon-saturn-body { width: 140px; height: 140px; background: #f1c40f; z-index: 2; border: 4px solid #000; border-radius: 50%; }
-        .cartoon-saturn-ring { position: absolute; width: 260px; height: 70px; border: 12px solid #e67e22; border-radius: 50%; transform: rotate(-20deg); z-index: 1; box-shadow: 0 0 0 4px #000; }
+    </style>
+</head>
+<body>
 
-        /* --- UFO FİLOSU --- */
-        .ufo-layer { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -5; }
-        .ufo-svg { position: absolute; filter: drop-shadow(0 0 5px currentColor); }
-        .ship1 { width: 130px; color: #00ffcc; animation: flyMain 40s linear infinite; }
-        @keyframes flyMain { 0% { left: -150px; top: 30%; transform: rotate(5deg); } 100% { left: 110%; top: 50%; transform: rotate(10deg); } }
+    <div class="header"><h2>RICK & MORTY DB</h2></div>
 
-        /* --- DÜZEN (Layout) --- */
-        .main-container {
+    <div class="space-background"></div>
+    <div class="star-layer stars-small"></div>
+    <div class="planet-container">
+        <div class="planet-base planet-earth"></div>
+        <div class="cartoon-saturn-body"></div>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="card">
+            <div class="image-container">
+                <img src="{{ karakter.resim }}" alt="{{ karakter.isim }}">
+                <div class="status-badge" title="{{ karakter.durum }}"></div>
+            </div>
+            
+            <h1>{{ karakter.isim }}</h1>
+
+            <div class="data-row"><span class="data-label">TÜR</span><span class="data-value">{{ karakter.tur }}</span></div>
+            <div class="data-row"><span class="data-label">CİNSİYET</span><span class="data-value">{{ karakter.cinsiyet }}</span></div>
+            <div class="data-row"><span class="data-label">DURUM</span><span class="data-value" style="color: {{ karakter.renk }}">{{ karakter.durum }}</span></div>
+
+            <div class="btn-group">
+                <form action="/" method="get">
+                    <button class="btn-portal">PORTALI AÇ</button>
+                </form>
+
+                <form action="/favori-ekle" method="post">
+                    <input type="hidden" name="isim" value="{{ karakter.isim }}">
+                    <input type="hidden" name="resim" value="{{ karakter.resim }}">
+                    <input type="hidden" name="tur" value="{{ karakter.tur }}">
+                    <input type="hidden" name="durum" value="{{ karakter.durum }}">
+                    <input type="hidden" name="renk" value="{{ karakter.renk }}">
+                    <button class="btn-fav">★ FAVORİLERE EKLE</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="fav-panel">
+            <div class="fav-title">FAVORİLER</div>
+            
+            <div class="fav-list">
+                {% for fav in favoriler %}
+                <div class="fav-item">
+                    <img src="{{ fav.resim }}" class="fav-img">
+                    <div class="fav-info">
+                        <h4>{{ fav.isim }}</h4>
+                        <span style="color: {{ fav.renk }}">{{ fav.durum }} • {{ fav.tur }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if not favoriler %}
+                <div style="text-align: center; color: #aaa; margin-top: 20px;">Henüz favori yok.</div>
+                {% endif %}
+            </div>
+
+            <form action="/temizle" method="get">
+                <button class="btn-clear">LİSTEYİ TEMİZLE</button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>
