@@ -4,21 +4,29 @@ import random
 
 app = Flask(__name__)
 
-# Session (Hafıza) için gizli anahtar (Bunu değiştirme)
+# Session (Hafıza) anahtarı
 app.secret_key = "rick_sanchez_secret_portal_key"
 
 BASE_URL = "https://rickandmortyapi.com/api/character/"
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
-    # Sayfa ilk açıldığında veya 'Portalı Aç' dendiğinde
-    
-    # Eğer hafızada favoriler listesi yoksa oluştur
+    # Hafıza kontrolü
     if 'favoriler' not in session:
         session['favoriler'] = []
 
-    # Rastgele Karakter Çek
-    karakter_id = random.randint(1, 826)
+    # --- YENİ MANTIK BURADA ---
+    # URL'de belirli bir karakter ID'si var mı diye bakıyoruz.
+    # Örn: localhost:5000/?char_id=5
+    istenen_id = request.args.get('char_id')
+
+    if istenen_id:
+        # Eğer favoriden döndüysek AYNI karakteri göster
+        karakter_id = istenen_id
+    else:
+        # Eğer Portalı Aç dediysek RASTGELE karakter göster
+        karakter_id = random.randint(1, 826)
+
     endpoint = f"{BASE_URL}{karakter_id}"
     
     try:
@@ -27,7 +35,7 @@ def home():
             data = response.json()
             
             karakter = {
-                'id': data['id'], # ID önemli (tekrar eklemeyi önlemek için)
+                'id': data['id'], # ID'yi HTML'e göndermek şart oldu
                 'isim': data['name'],
                 'resim': data['image'],
                 'tur': data['species'],
@@ -48,7 +56,9 @@ def home():
 # --- FAVORİ EKLEME ROTASI ---
 @app.route('/favori-ekle', methods=['POST'])
 def favori_ekle():
-    # Formdan gelen verileri al
+    # Formdan verileri al
+    mevcut_id = request.form['id'] # Hangi karakterde olduğumuzu öğreniyoruz
+    
     yeni_favori = {
         'isim': request.form['isim'],
         'resim': request.form['resim'],
@@ -57,11 +67,9 @@ def favori_ekle():
         'renk': request.form['renk']
     }
     
-    # Hafıza listesini al
     mevcut_favoriler = session.get('favoriler', [])
     
-    # AYNI KARAKTERİ İKİ KERE EKLEMEMEK İÇİN KONTROL:
-    # Listede bu isimde biri var mı diye bakıyoruz
+    # Aynı karakter kontrolü
     zaten_var = False
     for fav in mevcut_favoriler:
         if fav['isim'] == yeni_favori['isim']:
@@ -69,16 +77,18 @@ def favori_ekle():
             break
     
     if not zaten_var:
-        mevcut_favoriler.insert(0, yeni_favori) # En başa ekle
-        session['favoriler'] = mevcut_favoriler # Listeyi güncelle
+        mevcut_favoriler.insert(0, yeni_favori)
+        session['favoriler'] = mevcut_favoriler
     
-    # Ana sayfaya geri dön (Karakter değişmesin diye redirect yerine render yapabilirdik ama basit olsun diye redirect)
-    return redirect(url_for('home'))
+    # DİKKAT: Ana sayfaya dönerken "char_id" parametresini de gönderiyoruz.
+    # Böylece sayfa yenilendiğinde aynı karakter kalıyor.
+    return redirect(url_for('home', char_id=mevcut_id))
 
-# --- FAVORİLERİ TEMİZLEME ROTASI (Opsiyonel ama şık durur) ---
 @app.route('/temizle')
 def temizle():
     session['favoriler'] = []
+    # Temizleyince rastgele birine gitmek mantıklı, ya da o anki ID'de kalabiliriz.
+    # Şimdilik ana sayfaya (rastgele) atalım.
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
