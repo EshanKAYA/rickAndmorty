@@ -12,14 +12,11 @@ def home():
     if 'favoriler' not in session:
         session['favoriler'] = []
 
-    # 1. URL'de 'char_id' var mı diye bak (Favoriden dönerken burası dolu olacak)
     istenen_id = request.args.get('char_id')
 
     if istenen_id:
-        # Varsa o karakteri göster (Değiştirme!)
         karakter_id = istenen_id
     else:
-        # Yoksa (Portalı Aç dendiğinde) Rastgele getir
         karakter_id = random.randint(1, 826)
 
     try:
@@ -28,7 +25,7 @@ def home():
             data = response.json()
             
             karakter = {
-                'id': data['id'], # ID ÇOK ÖNEMLİ
+                'id': data['id'], 
                 'isim': data['name'],
                 'resim': data['image'],
                 'tur': data['species'],
@@ -45,7 +42,6 @@ def home():
 
 @app.route('/favori-ekle', methods=['POST'])
 def favori_ekle():
-    # Hangi karakterde olduğumuzu formdan alıyoruz
     mevcut_id = request.form.get('id')
     
     yeni_favori = {
@@ -58,12 +54,10 @@ def favori_ekle():
     
     mevcut_favoriler = session.get('favoriler', [])
     
-    # Aynı isimde varsa ekleme
     if not any(f['isim'] == yeni_favori['isim'] for f in mevcut_favoriler):
         mevcut_favoriler.insert(0, yeni_favori)
         session['favoriler'] = mevcut_favoriler
     
-    # ÖNEMLİ: Ana sayfaya dönerken ID'yi de gönderiyoruz ki karakter değişmesin
     return redirect(url_for('home', char_id=mevcut_id))
 
 @app.route('/temizle')
